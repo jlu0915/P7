@@ -20,9 +20,9 @@ def predict():
     For rendering results on HTML GUI
     '''
 
-    #url_df = 'https://raw.githubusercontent.com/jlu0915/P7/master/API/df_API.csv'
-    #df_test = pd.read_csv(url_df)
-    df_test = pd.read_csv('df_API.csv')
+    url_df = 'https://raw.githubusercontent.com/jlu0915/P7/master/API/df_API.csv'
+    df_test = pd.read_csv(url_df)
+    #df_test = pd.read_csv('df_API.csv')
     liste_clients = list(df_test['SK_ID_CURR'].unique())
 
     model = pickle.load(open('LGBM.pickle', 'rb')).best_estimator_
@@ -34,7 +34,7 @@ def predict():
         prediction="Ce client n'est pas répertorié"
     else :
         X = df_test[df_test['SK_ID_CURR'] == ID]
-        X.drop(['SK_ID_CURR'], axis=1)
+        X.drop('SK_ID_CURR', axis=1, inplace=True)
 
         #data = df[df.index == comment]
         probability_default_payment = model.predict_proba(X)[:, 1]
@@ -51,5 +51,5 @@ app.add_url_rule('/predict', 'predict', predict)
 
 # Run app.
 # Note : comment this line if you want to deploy on heroku
-#app.run()
+app.run()
 #app.run(debug=True)

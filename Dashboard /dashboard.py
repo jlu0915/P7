@@ -1,5 +1,5 @@
 import pandas as pd
-import streamlit as st  # 🎈 data web app development
+import streamlit as st  
 import requests
 import plotly.graph_objects as go
 import pickle
@@ -46,7 +46,7 @@ def main():
         layout="wide",
     )
 
-    df_dashboard_url = "https://raw.githubusercontent.com/jlu0915/P7/master/API/df_API.csv"
+    df_dashboard_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard%20/df_API.csv"
     df = pd.read_csv(df_dashboard_url)
 
     # dashboard title
@@ -67,7 +67,7 @@ def main():
 
     # Shap values
     explainer = shap.TreeExplainer(best_model)
-    df_api_url = "https://raw.githubusercontent.com/jlu0915/P7/master/API/df_API.csv"
+    df_api_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard%20/df_API.csv"
     df_API = pd.read_csv(df_api_url)
     df_shap = df_API.loc[:, df_API.columns != 'SK_ID_CURR']
     shap_values = explainer.shap_values(df_shap)
@@ -157,7 +157,7 @@ def main():
             else:
                 var2_cat = 0
         
-        df_comp = pd.read_csv("https://raw.githubusercontent.com/jlu0915/P7/master/API/df_API.csv")
+        df_comp = pd.read_csv("https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard%20/df_API.csv")
         df_comp = feature_engineering(df_comp)
         if variable1 == variable2:
             df_comp = df_comp[[var_en1, 'TARGET', 'Score']].dropna()

@@ -1,0 +1,66 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	color: #fff;
+	background: #032429;
+    background: radial-gradient(circle, #27584b 0%, #032429 100%);
+	background-size: cover;
+}
+
+section {
+	width:400px;
+	height:400px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 1rem;
+	margin: auto;
+}
+
+h1 {
+	font-size: 2.5rem;
+	text-align: center;
+	text-shadow: 1px 1px 2px #032429;
+}
+
+form {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 1rem 0 2rem 0;
+}
+
+input {
+	width: 96%;
+	background: rgba(0,0,0,0.3);
+	outline: 0;
+	padding: 0.5rem;
+	margin-bottom: 1rem;
+	color: #FFFFFF;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+	border: 1px solid rgba(0,0,0,0.3);
+	border-radius: 0.5rem;
+}
+
+button {
+	width: 100%;
+	background: linear-gradient(0deg, #2c5364 0%, #203a43 100%);
+	color: #FFFFFF;
+	font-size: 1.1rem;
+	padding: 0.5rem;
+	border: 1px solid rgba(0,0,0,0.3);
+	border-radius: 0.5rem;
+	cursor: pointer;
+  }
+  
+button:hover {
+	background-image: linear-gradient(0deg, #203a43 0%, #0f2027 100%);
+}
+
+h2 {
+	font-size: 1.5rem;
+	text-align: center;
+	text-shadow: 1px 1px 2px #032429;
+}

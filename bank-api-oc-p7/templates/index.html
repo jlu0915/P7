@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html >
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+<head>
+  <meta charset="UTF-8">
+  <title>Bank API</title>
+<link rel="shortcut icon" href="../logo.jpg" />
+<link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+<!--<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">-->
+<link rel="stylesheet" href="../static/css/style.css">
+
+
+</head>
+
+<body>
+ 
+  <section>
+	
+  <h1>Prédiction accord de prêt bancaire</h1>
+
+    <form action="{{ url_for('predict')}}"method="post">
+      
+      <!--placeholder="{{ request.form['id_client'] }}"-->
+      <input type="text" name="id_client" placeholder="Id client" required/>
+      <button type="submit">Prédiction</button>
+    
+    </form>
+
+  <h2>{{ prediction_text }}</h2>
+
+ </section>
+
+</body>
+</html>
