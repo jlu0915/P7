@@ -51,5 +51,5 @@ app.add_url_rule('/predict', 'predict', predict)
 
 # Run app.
 # Note : comment this line if you want to deploy on heroku
-app.run()
+#app.run()
 #app.run(debug=True)
