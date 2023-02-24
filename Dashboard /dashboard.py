@@ -14,7 +14,7 @@ sysmenu = '''
 footer {visibility:hidden;}
 </style>
 '''
-st.set_page_config(page_title='预测系统', layout="wide")
+st.set_page_config(page_title='Loan Scoring APP', layout="wide")
 
 df_test = pd.read_csv('df_API.csv')
 model = pickle.load(open('LGBM.pickle', 'rb')).best_estimator_
@@ -67,8 +67,8 @@ with st.sidebar:
         col3, col4, col5 = st.columns([2, 8, 2])
         with col4:
             st.subheader('General Information')
-        st.write('Gender：{}'.format(flag['CODE_GENDER'].apply(lambda x: 'Femme' if x == 1 else 'Homme').values[0]))
+        st.write('Gender：{}'.format(flag['CODE_GENDER'].apply(lambda x: 'Woman' if x == 1 else 'Men').values[0]))
         st.write('Age：{}'.format(flag['DAYS_BIRTH'].apply(lambda x: round(-x / 365.25, 0)).values[0]))
         st.write('Total revenue：{} k'.format(flag['AMT_INCOME_TOTAL'].values[0] / 1000))
-        st.write('Employ：{} year'.format(round(-flag["DAYS_EMPLOYED"].values[0] / 365.25, 1)))
+        st.write('Seniority：{} year'.format(round(-flag["DAYS_EMPLOYED"].values[0] / 365.25, 1)))
 predict()
