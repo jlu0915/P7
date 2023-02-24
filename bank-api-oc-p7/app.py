@@ -34,7 +34,7 @@ def predict():
         prediction="Ce client n'est pas répertorié"
     else :
         X = df_test[df_test['SK_ID_CURR'] == ID]
-        X.drop('SK_ID_CURR', axis=1, inplace=True)
+        X.drop('SK_ID_CURR', axis=1, inplace=True) 
 
         #data = df[df.index == comment]
         probability_default_payment = model.predict_proba(X)[:, 1]
@@ -51,5 +51,6 @@ app.add_url_rule('/predict', 'predict', predict)
 
 # Run app.
 # Note : comment this line if you want to deploy on heroku
-app.run()
+
+#app.run(port=8080)
 #app.run(debug=True)
