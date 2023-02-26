@@ -1,3 +1,4 @@
+import requests
 import streamlit as st
 import pandas as pd
 import pickle
@@ -5,6 +6,7 @@ import warnings
 import shap
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+
 
 warnings.filterwarnings('ignore')
 
@@ -16,8 +18,18 @@ footer {visibility:hidden;}
 '''
 st.set_page_config(page_title='Loan Scoring APP', layout="wide")
 
-df_test = pd.read_csv('df_API.csv')
+#df_test = pd.read_csv('df_API.csv')
+df_dashboard_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard%20/df_API.csv"
+df_dashboard = pd.read_csv(df_dashboard_url)
 model = pickle.load(open('LGBM.pickle', 'rb')).best_estimator_
+
+
+def fetch(session, url):
+    try:
+        result = session.get(url)
+        return result.json()
+    except Exception:
+        return {}
 
 st.markdown(sysmenu, unsafe_allow_html=True)
 
@@ -27,8 +39,12 @@ def predict():
     with col2:
         st.title('_solvency analysis_')
     flag.drop(['SK_ID_CURR'], axis=1, inplace=True)
-    probability_default_payment = model.predict_proba(flag)[:, 1]
-
+    #probability_default_payment = model.predict_proba(flag)[:, 1]
+    session = requests.Session()
+    probability_default_payment = fetch(session, f"https://bank-api-oc-p7.herokuapp.com/{option}")
+    accord_credit = "Oui" if probability_default_payment['retour_prediction'] == '1' else "Non" #✅
+    score = float(probability_default_payment['predict_proba_1'])
+    
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=probability_default_payment[0] * 100,
@@ -61,9 +77,9 @@ with st.sidebar:
     st.image('logo.png')
     option = st.selectbox(
         'Client ID',
-        df_test['SK_ID_CURR'].unique())
+        df_dashboard['SK_ID_CURR'].unique())
     if option:
-        flag = df_test[df_test["SK_ID_CURR"] == option]
+        flag = df_dashboard[df_dashboard["SK_ID_CURR"] == option]
         col3, col4, col5 = st.columns([2, 8, 2])
         with col4:
             st.subheader('General Information')
