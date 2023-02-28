@@ -9,3 +9,5 @@ zipp==3.14.0
 MarkupSafe==2.1.2
 pandas
 scikit-learn
+lightgbm
+colorama

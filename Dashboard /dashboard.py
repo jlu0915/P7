@@ -7,8 +7,8 @@ import shap
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
-
 warnings.filterwarnings('ignore')
+st.set_page_config(page_title='Loan Scoring APP', layout="wide")
 
 sysmenu = '''
 <style>
@@ -16,13 +16,12 @@ sysmenu = '''
 footer {visibility:hidden;}
 </style>
 '''
-st.set_page_config(page_title='Loan Scoring APP', layout="wide")
 
-#df_test = pd.read_csv('df_API.csv')
-df_dashboard_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard%20/df_API.csv"
+st.markdown(sysmenu, unsafe_allow_html=True)
+
+df_dashboard_url = "df_API.csv"
 df_dashboard = pd.read_csv(df_dashboard_url)
 model = pickle.load(open('LGBM.pickle', 'rb')).best_estimator_
-
 
 def fetch(session, url):
     try:
@@ -31,23 +30,25 @@ def fetch(session, url):
     except Exception:
         return {}
 
-st.markdown(sysmenu, unsafe_allow_html=True)
-
-
 def predict():
     col1, col2 = st.columns([3.5, 6.5])
     with col2:
         st.title('_solvency analysis_')
     flag.drop(['SK_ID_CURR'], axis=1, inplace=True)
-    #probability_default_payment = model.predict_proba(flag)[:, 1]
-    session = requests.Session()
-    probability_default_payment = fetch(session, f"https://bank-api-oc-p7.herokuapp.com/{option}")
-    accord_credit = "Oui" if probability_default_payment['retour_prediction'] == '1' else "Non" #✅
-    score = float(probability_default_payment['predict_proba_1'])
+
+    url = f"http://127.0.0.1:8080/predict/{option}"
+    probability_default_payment = requests.get(url).json()
+    
+    if probability_default_payment['prediction'] == 'Prêt Accordé':
+        accord_credit = "Oui" 
+    else:
+        accord_credit = "Non" 
+        
+    score = probability_default_payment['score']
     
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
-        value=probability_default_payment[0] * 100,
+        value=score[0] * 100,
         title={'text': "Client score"},
         domain={'x': [0, 1], 'y': [0, 1]}
     ))
@@ -65,13 +66,12 @@ def predict():
 
     with tab2:
         st.image('features importance.png')
-    if probability_default_payment[0] >= 0.92:
+    if score[0] >= 0.92:
         prediction = "Prêt NON Accordé"
     else:
         prediction = "Prêt Accordé"
     with st.sidebar:
         st.write('Predict：{}'.format(prediction))
-
 
 with st.sidebar:
     st.image('logo.png')
@@ -87,4 +87,7 @@ with st.sidebar:
         st.write('Age：{}'.format(flag['DAYS_BIRTH'].apply(lambda x: round(-x / 365.25, 0)).values[0]))
         st.write('Total revenue：{} k'.format(flag['AMT_INCOME_TOTAL'].values[0] / 1000))
         st.write('Seniority：{} year'.format(round(-flag["DAYS_EMPLOYED"].values[0] / 365.25, 1)))
+
 predict()
+#if __name__ == "__predict__":
+    #predict()
