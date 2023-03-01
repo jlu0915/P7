@@ -1,0 +1,10 @@
+gunicorn
+pandas
+streamlit
+requests
+plotly
+streamlit_shap
+shap
+numpy
+matplotlib
+scikit-learn
