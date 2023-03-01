@@ -39,7 +39,9 @@ def predict(ID):
 
     return jsonify({"prediction": prediction, "score": probability_default_payment.tolist()})
 
-app.run(port=8080, debug=True)
+#app.run(port=8080, debug=True)
+#app.run(debug=True)
+app.run(port=8080)
 '''
 if __name__ == "__main__":
     """

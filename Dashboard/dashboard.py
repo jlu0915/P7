@@ -19,7 +19,7 @@ footer {visibility:hidden;}
 
 st.markdown(sysmenu, unsafe_allow_html=True)
 
-df_dashboard_url = "df_API.csv"
+df_dashboard_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard%20/df_API.csv"
 df_dashboard = pd.read_csv(df_dashboard_url)
 model = pickle.load(open('LGBM.pickle', 'rb')).best_estimator_
 
@@ -36,8 +36,10 @@ def predict():
         st.title('_solvency analysis_')
     flag.drop(['SK_ID_CURR'], axis=1, inplace=True)
 
-    url = f"http://127.0.0.1:8080/predict/{option}"
-    probability_default_payment = requests.get(url).json()
+    url = f"https://bank-api-oc-p7.herokuapp.com/predict/{option}"
+    result = requests.get(url)
+    result.encoding = "utf-8"
+    probability_default_payment = result.json()
     
     if probability_default_payment['prediction'] == 'Prêt Accordé':
         accord_credit = "Oui" 
