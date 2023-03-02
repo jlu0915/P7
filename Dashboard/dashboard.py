@@ -19,7 +19,7 @@ footer {visibility:hidden;}
 
 st.markdown(sysmenu, unsafe_allow_html=True)
 
-df_dashboard_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard%20/df_API.csv"
+df_dashboard_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard/df_API.csv"
 df_dashboard = pd.read_csv(df_dashboard_url)
 model = pickle.load(open('LGBM.pickle', 'rb')).best_estimator_
 
