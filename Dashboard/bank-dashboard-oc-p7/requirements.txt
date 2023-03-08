@@ -8,3 +8,5 @@ shap
 numpy
 matplotlib
 scikit-learn
+lightgbm
+ipython
