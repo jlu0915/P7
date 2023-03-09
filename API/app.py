@@ -14,19 +14,20 @@ def predict(ID):
     For rendering results on HTML GUI
     '''
 
-    url_df = 'https://raw.githubusercontent.com/jlu0915/P7/master/API/df_API.csv'
+    url_df = 'df_API.csv'
     df_test = pd.read_csv(url_df)
+    df_test.drop("TARGET", inplace=True, axis=1)
     #df_test = pd.read_csv('df_API.csv')
     liste_clients = list(df_test['SK_ID_CURR'].unique())
     
-    probability_default_payment = 0
+    probability_default_payment = np.array([0])
     model = pickle.load(open('LGBM.pickle', 'rb')).best_estimator_
     seuil = 0.92
     ID = int(ID)
     if ID not in liste_clients:
         prediction="Ce client n'est pas répertorié"
     else :
-        X = df_test[df_test['SK_ID_CURR'] == ID]
+        X = df_test[df_test['SK_ID_CURR'] == ID]#[df_test.columns.tolist()[1:]]
         X.drop('SK_ID_CURR', axis=1, inplace=True) 
 
         #data = df[df.index == comment]
@@ -39,9 +40,7 @@ def predict(ID):
 
     return jsonify({"prediction": prediction, "score": probability_default_payment.tolist()})
 
-#app.run(port=8080, debug=True)
-#app.run(debug=True)
-#app.run(port=8080)
+app.run(port=8080, debug=True)
 '''
 if __name__ == "__main__":
     """
