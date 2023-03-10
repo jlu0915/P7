@@ -14,7 +14,8 @@ def predict(ID):
     For rendering results on HTML GUI
     '''
 
-    url_df = 'df_API.csv'
+    #url_df = 'df_API.csv'
+    url_df = 'https://raw.githubusercontent.com/jlu0915/P7/master/API/df_API.csv'
     df_test = pd.read_csv(url_df)
     df_test.drop("TARGET", inplace=True, axis=1)
     #df_test = pd.read_csv('df_API.csv')
@@ -34,13 +35,13 @@ def predict(ID):
         
         probability_default_payment = model.predict_proba(X)[:, 1]
         if probability_default_payment >= seuil:
-            prediction = "Prêt NON Accordé"
-        else:
             prediction = "Prêt Accordé"
+        else:
+            prediction = "Prêt NON Accordé"
 
     return jsonify({"prediction": prediction, "score": probability_default_payment.tolist()})
 
-app.run(port=8080, debug=True)
+#app.run(port=8080, debug=True)
 '''
 if __name__ == "__main__":
     """
