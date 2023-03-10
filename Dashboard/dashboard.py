@@ -22,7 +22,8 @@ footer {visibility:hidden;}
 st.markdown(sysmenu, unsafe_allow_html=True)
 
 df_dashboard_url = "https://raw.githubusercontent.com/jlu0915/P7/master/API/df_API.csv"
-df = pd.read_csv("data.csv")
+df_url = "https://media.githubusercontent.com/media/jlu0915/P7/master/Dashboard/data.csv"
+df = pd.read_csv(df_url)
 df_dashboard = pd.read_csv(df_dashboard_url)
 df_dashboard.drop("TARGET", inplace=True, axis=1)
 model = pickle.load(open('LGBM.pickle', 'rb')).best_estimator_
@@ -101,9 +102,9 @@ def predict():
         st.image('features importance.png')
         #st.image('features force.png')
     if score[0] >= 0.92:
-        prediction = "Prêt NON Accordé"
-    else:
         prediction = "Prêt Accordé"
+    else:
+        prediction = "Prêt NON Accordé"
     with st.sidebar:
         st.write('Predict：{}'.format(prediction))
 
@@ -137,7 +138,8 @@ def predict():
             else:
                 var2_cat = 0
         
-        df_comp = pd.read_csv('df_comp_bis.csv')
+        df_comp_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard/df_comp_bis.csv"
+        df_comp = pd.read_csv(df_comp_url)
         new_df = feature_engineering(df_comp)
         if variable1 == variable2:
             df_comp = df_comp[[var_en1, 'TARGET', 'Score']].dropna()
