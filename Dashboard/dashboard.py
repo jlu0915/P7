@@ -22,7 +22,7 @@ footer {visibility:hidden;}
 st.markdown(sysmenu, unsafe_allow_html=True)
 
 df_dashboard_url = "https://raw.githubusercontent.com/jlu0915/P7/master/API/df_API.csv"
-df_url = "https://media.githubusercontent.com/media/jlu0915/P7/master/Dashboard/data.csv"
+df_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard/df_data_bis.csv"
 df = pd.read_csv(df_url)
 df_dashboard = pd.read_csv(df_dashboard_url)
 df_dashboard.drop("TARGET", inplace=True, axis=1)
@@ -90,9 +90,9 @@ def predict():
     plt.savefig('features importance.png', dpi=100)
     st.write(flag.shape)
 
-    #shap_values = explainer.shap_values(df_dashboard)
-    #shap.force_plot(explainer.expected_value[1], shap_values[1][option, :], df_dashboard.iloc[option, :], link='logit')
-    #plt.savefig('features force.png', dpi=100)
+    shap_values = explainer.shap_values(df_dashboard)
+    shap.force_plot(explainer.expected_value[1], shap_values[1][option, :], df_dashboard.iloc[option, :], link='logit')
+    plt.savefig('explaination local.png', dpi=100)
 
     tab1, tab2, tab3 = st.tabs(['Score client', 'Explication du score', 'Comparaison aux autres clients'])
     with tab1:
