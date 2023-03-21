@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.express as px
 import numpy as np
+from streamlit_shap import st_shap
 
 warnings.filterwarnings('ignore')
 st.set_page_config(page_title='Loan Scoring APP', layout="wide")
@@ -27,6 +28,14 @@ df = pd.read_csv(df_url)
 df_dashboard = pd.read_csv(df_dashboard_url)
 df_dashboard.drop("TARGET", inplace=True, axis=1)
 model = pickle.load(open('LGBM.pickle', 'rb')).best_estimator_
+
+#df_dashboard_bis = "https://raw.githubusercontent.com/charlottemllt/Implementation-d-un-modele-de-scoring/master/Dashboard/df_dashboard_lite.csv"
+#df = pd.read_csv(df_dashboard_bis)
+
+# Récupération de ID_client
+#ID_client = st.sidebar.selectbox("Sélectionnez l'ID client", pd.unique(df['SK_ID_CURR']))
+
+
 
 def feature_engineering(df):
     new_df = pd.DataFrame()
@@ -83,30 +92,57 @@ def predict():
     ))
     fig.update_layout(yaxis={'range': [0, 100]})
 
-    shap.initjs()
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(flag)
-    shap.summary_plot(shap_values, flag, show=False)
-    plt.savefig('features importance.png', dpi=100)
-    st.write(flag.shape)
+    # dataframe filter
+    #df_client = df[df['SK_ID_CURR'] == ID_client]
+    #new_df = feature_engineering(option)
 
-    shap_values = explainer.shap_values(df_dashboard)
-    shap.force_plot(explainer.expected_value[1], shap_values[1][option, :], df_dashboard.iloc[option, :], link='logit')
-    plt.savefig('explaination local.png', dpi=100)
+    #shap.initjs()
+    #explainer = shap.TreeExplainer(model)
+    #shap_values = explainer.shap_values(flag)
+
+    #shap.force_plot(explainer.expected_value[1], shap_values[1], flag,link='logit', show=False)
+    #plt.savefig('explaination-local.png', dpi=100)
+
+    #shap.summary_plot(shap_values, flag, show=False)
+    #plt.savefig('features importance.png', dpi=100)
+    # st.write(flag.shape)
+
+    #shap.initjs()
+
+    # Shap values
+    explainer = shap.TreeExplainer(model)
+    #df_api_url = "https://raw.githubusercontent.com/charlottemllt/Implementation-d-un-modele-de-scoring/master/Dashboard/df_API_lite.csv"
+    #df_API = pd.read_csv(df_api_url)
+    df_shap = df_dashboard.loc[:, df_dashboard.columns != 'SK_ID_CURR']
+    shap_values = explainer.shap_values(df_shap)
+    
 
     tab1, tab2, tab3 = st.tabs(['Score client', 'Explication du score', 'Comparaison aux autres clients'])
     with tab1:
-        st.plotly_chart(fig, use_container_width=True)
-
-    with tab2:
-        st.image('features importance.png')
-        #st.image('features force.png')
-    if score[0] >= 0.92:
-        prediction = "Prêt Accordé"
-    else:
-        prediction = "Prêt NON Accordé"
-    with st.sidebar:
+        if score[0] >= 0.92:
+            prediction = "Prêt Accordé"
+        else:
+            prediction = "Prêt NON Accordé"
+        st.write('Probability threshold：{}%'.format(round(score[0]*100, 2)))
         st.write('Predict：{}'.format(prediction))
+        st.plotly_chart(fig, use_container_width=True)
+    
+    
+    with tab2:
+        #st.image('features importance.png')
+        #st.image('explaination-local.png')
+
+        # Interprétation pour l'individu choisi
+        st.header("Impact des variables sur le score pour le client " + str(option))
+        st.write('Les variables en rose ont contribué à accorder le crédit (donc à augmenter le score).\n Les variables en bleu ont contribué à refuser le crédit (donc à diminuer le score)')
+        id = df_dashboard[df_dashboard['SK_ID_CURR'] == option].index
+        st_shap(shap.force_plot(explainer.expected_value[1], shap_values[1][id, :], df_shap.iloc[id, :], link='logit'))
+        
+
+        st.header("Impact des variables pour l'ensemble des clients")
+        st.write('Les variables en rose ont contribué à accorder le crédit (donc à augmenter le score).\n Les variables en bleu ont contribué à refuser le crédit (donc à diminuer le score)')
+        st_shap(shap.summary_plot(shap_values, df_shap))
+    
 
     with tab3:
         st.header("Comparaison aux autres clients")
@@ -138,8 +174,10 @@ def predict():
             else:
                 var2_cat = 0
         
-        df_comp_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard/df_comp_bis.csv"
-        df_comp = pd.read_csv(df_comp_url)
+        df_comp = pd.read_csv("https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard/df_comp_bis.csv")
+        #df_comp_url = "https://raw.githubusercontent.com/jlu0915/P7/master/Dashboard/df_comp_bis.csv"
+        #df_comp = pd.read_csv(df_comp_url)
+        df_comp = feature_engineering(df_comp)
         new_df = feature_engineering(df_comp)
         if variable1 == variable2:
             df_comp = df_comp[[var_en1, 'TARGET', 'Score']].dropna()
@@ -208,10 +246,10 @@ with st.sidebar:
         col3, col4, col5 = st.columns([2, 8, 2])
         with col4:
             st.subheader('General Information')
-        st.write('Gender：{}'.format(flag1['CODE_GENDER'].apply(lambda x: 'Woman' if x == 1 else 'Men').values[0]))
+        st.write('Genre：{}'.format(flag1['CODE_GENDER'].apply(lambda x: 'Woman' if x == 1 else 'Men').values[0]))
         st.write('Age：{}'.format(flag1['DAYS_BIRTH'].apply(lambda x: round(-x / 365.25, 0)).values[0]))
-        st.write('Total revenue：{} k'.format(flag1['AMT_INCOME_TOTAL'].values[0] / 1000))
-        st.write('Seniority：{} year'.format(round(-flag1["DAYS_EMPLOYED"].values[0] / 365.25, 1)))
+        st.write('Revenus totaux：{} k'.format(flag1['AMT_INCOME_TOTAL'].values[0] / 1000))
+        st.write('Anciennete emploi：{} year'.format(round(-flag1["DAYS_EMPLOYED"].values[0] / 365.25, 1)))
 
 predict()
 #if __name__ == "__predict__":
