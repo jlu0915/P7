@@ -140,7 +140,7 @@ def predict():
         
 
         st.header("Impact des variables pour l'ensemble des clients")
-        st.write('Les variables en rose ont contribué à accorder le crédit (donc à augmenter le score).\n Les variables en bleu ont contribué à refuser le crédit (donc à diminuer le score)')
+        st.write('Pour chacune des variables et chacune des classes : Calcul de la contribution à l’amélioration ou à la diminution du score.\n Classement de l’importance des variables par l’ordre décroissant')
         st_shap(shap.summary_plot(shap_values, df_shap))
     
 
