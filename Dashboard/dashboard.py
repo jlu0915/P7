@@ -84,6 +84,7 @@ def predict():
         
     score = probability_default_payment['score']
     
+    
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=score[0] * 100,
@@ -123,7 +124,8 @@ def predict():
             prediction = "Prêt Accordé"
         else:
             prediction = "Prêt NON Accordé"
-        st.write('Probability threshold：{}%'.format(round(score[0]*100, 2)))
+        st.write('Default Probability：{}%'.format(round(score[0]*100, 2)))
+        st.write('Default model threshold：{}%'.format(round(0.92*100, 2)))
         st.write('Predict：{}'.format(prediction))
         st.plotly_chart(fig, use_container_width=True)
     
@@ -163,7 +165,7 @@ def predict():
                 var1_cat = 0
         
         with col2:
-            liste_variables2 = ['Ancienneté de l\'emploi', 'ID_Client', 'GeFnre', 'Âge', 'Revenus totaux',
+            liste_variables2 = ['Ancienneté de l\'emploi', 'ID_Client', 'Genre', 'Âge', 'Revenus totaux',
                                 'Nombre de personnes dans la famille', 'Revenus par personne', 'Voiture personnelle',
                                 'Education secondaire', 'Montant des produits à l\'origine de la demande de prêt', 'Montant du crédit',
                                 'Fréquence de paiement', 'Montant des annuités', 'Source externe 2', 'Source externe 3']
@@ -191,8 +193,8 @@ def predict():
             else:
                 marg = None
             fig1 = px.histogram(df_comp, x=var_en1, color='TARGET', marginal=marg, nbins=50)
-            if var1_cat == 0:
-                fig1.add_vline(x=new_df[var_en1].mean(), line_width=5, line_color='#8f00ff', name='Client ' + str(option))
+            #if var1_cat == 0:
+                #fig1.add_vline(x=new_df[var_en1].mean(), line_width=5, line_color='#8f00ff', name='Client ' + str(option))
             fig1.update_layout(barmode='overlay', title={'text': variable1, 'x': 0.5, 'xanchor': 'center'})
             fig1.update_traces(opacity=0.75)
             st.plotly_chart(fig1, use_container_width=True)
@@ -202,8 +204,8 @@ def predict():
             else:
                 marg = None
             fig2 = px.histogram(df_comp, x=var_en2, color='TARGET', marginal=marg, nbins=50)
-            if var2_cat == 0:
-                fig2.add_vline(x=new_df[var_en2].mean(), line_width=5, line_color='#8f00ff', name='Client ' + str(option))
+            #if var2_cat == 0:
+                #fig2.add_vline(x=new_df[var_en2].mean(), line_width=5, line_color='#8f00ff', name='Client ' + str(option))
             fig2.update_layout(barmode='overlay', title={'text': variable2, 'x': 0.5, 'xanchor': 'center'})
             fig2.update_traces(opacity=0.75)
             st.plotly_chart(fig2, use_container_width=True)
@@ -214,8 +216,8 @@ def predict():
                                                       (0.5, 'red'), (0.7, 'orange'),
                                                       (0.7, 'orange'), (0.91, 'yellow'),
                                                       (0.91, 'green'),  (1.0, 'green')])
-            scat.add_trace(go.Scatter(x=new_df[var_en2], y=new_df[var_en1], mode='markers',
-                                      marker=dict(size=16, color='#8f00ff'), opacity=0.99, name='Client ' + str(option)))
+            #scat.add_trace(go.Scatter(x=new_df[var_en2], y=new_df[var_en1], mode='markers',
+                                      #marker=dict(size=16, color='#8f00ff'), opacity=0.99, name='Client ' + str(option)))
             scat.update_layout(legend=dict(yanchor="bottom", y=1.02, xanchor="right", x=1))
             st.plotly_chart(scat, use_container_width=True)
         elif (var1_cat + var2_cat) == 2:
@@ -231,10 +233,11 @@ def predict():
                                     (0.5, 'red'), (0.7, 'orange'),
                                     (0.7, 'orange'), (0.91, 'yellow'),
                                     (0.91, 'green'),  (1.0, 'green')])
-            scat.add_trace(go.Scatter(x=new_df[var_en1], y=new_df[var_en2], mode='markers',
-                                      marker=dict(size=16, color='#8f00ff'), opacity=0.99, name='Client ' + str(option)))
+            #scat.add_trace(go.Scatter(x=new_df[var_en1], y=new_df[var_en2], mode='markers',
+                                      #marker=dict(size=16, color='#8f00ff'), opacity=0.99, name='Client ' + str(option)))
             scat.update_layout(legend=dict(yanchor="bottom", y=1.02, xanchor="right", x=1))
-
+            st.plotly_chart(scat, use_container_width=True)
+            
 with st.sidebar:
     st.image('logo.png')
     option = st.selectbox(
